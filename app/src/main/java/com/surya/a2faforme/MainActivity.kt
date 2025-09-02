@@ -2,11 +2,13 @@ package com.surya.a2faforme
 
 //import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +28,9 @@ import androidx.compose.ui.unit.sp
 //import androidx.compose.ui.text.*
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.surya.a2faforme.ui.theme._2FAformeTheme
@@ -83,13 +88,15 @@ class MainActivity : ComponentActivity() {
                                     textAlign = TextAlign.Center,
                                     fontSize = 48.sp
                                 )
+                                val text = (0..999999)
+                                    .random()
+                                    .toString()
+                                    .padStart(6, '0')
+                                    .replaceRange(3,3," ")
+                                val clipboardManager = LocalClipboardManager.current
                                 Text(
 //                                    text = "123456",
-                                    text = (0..999999)
-                                        .random()
-                                        .toString()
-                                        .padStart(6, '0')
-                                        .replaceRange(3,3," "),
+                                    text = text,
                                     modifier = Modifier
                                         .padding(1.dp)
                                         .background(
@@ -97,6 +104,18 @@ class MainActivity : ComponentActivity() {
 //                                        shape= RoundedCornerShape(100),
                                             shape= RoundedCornerShape(8.dp, 8.dp, 32.dp, 32.dp),
                                             color = MaterialTheme.colorScheme.primaryContainer,
+                                        )
+                                        .clickable(
+                                            onClick = {
+                                                clipboardManager.setText(
+                                                    AnnotatedString(
+                                                        text
+                                                            .replaceRange(3,3,"")
+                                                    )
+                                                )
+                                                Toast.makeText(applicationContext, "copied to clipboard", Toast.LENGTH_SHORT,).show()
+
+                                            }
                                         )
                                         .fillMaxWidth(),
                                     color = MaterialTheme.colorScheme.primary,
