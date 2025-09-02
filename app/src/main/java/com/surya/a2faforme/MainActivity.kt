@@ -62,23 +62,49 @@ class MainActivity : ComponentActivity() {
                             .background(MaterialTheme.colorScheme.background),
 //                            .background(Color.Cyan),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(0.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         arrayOfNulls<Byte>(15).forEach { _ ->
-                            Text(
-                                text = "123456",
-                                modifier = Modifier
-                                    .padding(1.dp)
-                                    .background(
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(1.dp)
+                            ) {
+                                Text(
+                                    text = "title",
+                                    modifier = Modifier
+                                        .padding(1.dp)
+                                        .background(
 //                                        Color(156, 39, 176, 255),
-                                        shape= RoundedCornerShape(100),
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                    )
-                                    .fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.primary,
-                                textAlign = TextAlign.Center,
-                                fontSize = 64.sp
-                            )
+//                                        shape= RoundedCornerShape(100),
+                                            shape = RoundedCornerShape(32.dp, 32.dp, 8.dp, 8.dp),
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                        )
+                                        .fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 48.sp
+                                )
+                                Text(
+//                                    text = "123456",
+                                    text = (0..999999)
+                                        .random()
+                                        .toString()
+                                        .padStart(6, '0')
+                                        .replaceRange(3,3," "),
+                                    modifier = Modifier
+                                        .padding(1.dp)
+                                        .background(
+//                                        Color(156, 39, 176, 255),
+//                                        shape= RoundedCornerShape(100),
+                                            shape= RoundedCornerShape(8.dp, 8.dp, 32.dp, 32.dp),
+                                            color = MaterialTheme.colorScheme.primaryContainer,
+                                        )
+                                        .fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 64.sp
+                                )
+                            }
+
                         }
 
                     }
