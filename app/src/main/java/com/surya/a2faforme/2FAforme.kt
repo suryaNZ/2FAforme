@@ -5,9 +5,6 @@ package com.surya.a2faforme
 import android.app.Application
 import android.util.Log
 import java.io.File
-import java.io.FileWriter
-import java.security.KeyStore
-
 
 
 class A2FAforme : Application() {
