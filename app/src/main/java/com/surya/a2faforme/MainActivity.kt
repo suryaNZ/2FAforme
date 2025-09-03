@@ -2,6 +2,7 @@ package com.surya.a2faforme
 
 //import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.surya.a2faforme.ui.theme._2FAformeTheme
+import java.io.File
 
 
 //Onc
@@ -43,13 +45,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
+
         setContent {
             _2FAformeTheme {
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize(),
-//                        .background(MaterialTheme.colorScheme.background)
-//                        .background(Color.Cyan)
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {  },
@@ -65,11 +67,14 @@ class MainActivity : ComponentActivity() {
                             .verticalScroll(ScrollState(0))
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.background),
-//                            .background(Color.Cyan),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        arrayOfNulls<Byte>(15).forEach { _ ->
+
+//                            if(TOTP_DIR.)
+//                        arrayOfNulls<Int>(15).forEach { _ ->
+                        TOTP_DIR.listFiles().forEach { file:File ->
+                            Log.d("FILE_FOUND", file.absolutePath)
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(1.dp)
                             ) {
@@ -125,6 +130,64 @@ class MainActivity : ComponentActivity() {
                             }
 
                         }
+//                        }
+
+//                        arrayOfNulls<Byte>(15).forEach { _ ->
+//                            Column(
+//                                verticalArrangement = Arrangement.spacedBy(1.dp)
+//                            ) {
+//                                Text(
+//                                    text = "title",
+//                                    modifier = Modifier
+//                                        .padding(1.dp)
+//                                        .background(
+////                                        Color(156, 39, 176, 255),
+////                                        shape= RoundedCornerShape(100),
+//                                            shape = RoundedCornerShape(32.dp, 32.dp, 8.dp, 8.dp),
+//                                            color = MaterialTheme.colorScheme.primaryContainer,
+//                                        )
+//                                        .fillMaxWidth(),
+//                                    color = MaterialTheme.colorScheme.primary,
+//                                    textAlign = TextAlign.Center,
+//                                    fontSize = 48.sp
+//                                )
+//                                val text = (0..999999)
+//                                    .random()
+//                                    .toString()
+//                                    .padStart(6, '0')
+//                                    .replaceRange(3,3," ")
+//                                val clipboardManager = LocalClipboardManager.current
+//                                Text(
+////                                    text = "123456",
+//                                    text = text,
+//                                    modifier = Modifier
+//                                        .padding(1.dp)
+//                                        .background(
+////                                        Color(156, 39, 176, 255),
+////                                        shape= RoundedCornerShape(100),
+//                                            shape= RoundedCornerShape(8.dp, 8.dp, 32.dp, 32.dp),
+//                                            color = MaterialTheme.colorScheme.primaryContainer,
+//                                        )
+//                                        .clickable(
+//                                            onClick = {
+//                                                clipboardManager.setText(
+//                                                    AnnotatedString(
+//                                                        text
+//                                                            .replaceRange(3,3,"")
+//                                                    )
+//                                                )
+//                                                Toast.makeText(applicationContext, "copied to clipboard", Toast.LENGTH_SHORT,).show()
+//
+//                                            }
+//                                        )
+//                                        .fillMaxWidth(),
+//                                    color = MaterialTheme.colorScheme.primary,
+//                                    textAlign = TextAlign.Center,
+//                                    fontSize = 64.sp
+//                                )
+//                            }
+//
+//                        }
 
                     }
                 }
