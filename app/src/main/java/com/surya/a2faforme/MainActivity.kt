@@ -73,8 +73,8 @@ class MainActivity : ComponentActivity() {
 
 //                            if(TOTP_DIR.)
 //                        arrayOfNulls<Int>(15).forEach { _ ->
-                        TOTP_DIR.listFiles().forEach { file:File ->
-                            Log.d("FILE_FOUND", file.absolutePath)
+                        retrieveKeys(TOTP_DIR).forEach { keydata:Map<String, String> ->
+//                            Log.d("FILE_FOUND", file.absolutePath)
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(1.dp)
                             ) {
@@ -93,11 +93,18 @@ class MainActivity : ComponentActivity() {
                                     textAlign = TextAlign.Center,
                                     fontSize = 48.sp
                                 )
-                                val text = (0..999999)
-                                    .random()
-                                    .toString()
-                                    .padStart(6, '0')
-                                    .replaceRange(3,3," ")
+//                                val text = (0..999999)
+//                                    .random()
+//                                    .toString()
+//                                    .padStart(6, '0')
+//                                    .replaceRange(3,3," ")
+                                val text = generateTOTP(
+                                    keydata["secret"]!!,
+                                    System.currentTimeMillis(),
+                                    keydata["period"]!!,
+                                    keydata["digits"]!!,
+                                    keydata["algorithm"]!!,
+                                )
                                 val clipboardManager = LocalClipboardManager.current
                                 Text(
 //                                    text = "123456",

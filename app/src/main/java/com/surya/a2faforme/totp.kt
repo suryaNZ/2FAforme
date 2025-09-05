@@ -1,5 +1,6 @@
 package com.surya.a2faforme
 
+import org.apache.commons.codec.binary.Base32
 import java.math.BigInteger
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -23,17 +24,26 @@ private fun hexStrToBytes(hex: String): ByteArray {
 private val DIGITS_POWER =
     intArrayOf(1,10,100,1000,10000,100000,1000000,10000000,100000000)
 
+val ALGO = mapOf<String, String>(
+    "SHA1" to "HmacSHA1",
+    "SHA256" to "HmacSHA256",
+    "SHA512" to "HmacSHA512",
+)
 // TODO return pair of code and time remaining
 fun generateTOTP(
-    key:String,
+    keyGiven:String,
     time: Long,
     period: String,
     retDigits: String,
-    crypto: String): String {
+    cryptoGiven: String): String {
     val codeDigits:Int = Integer.decode(retDigits).toInt()
 //    val result: String = ""
 
+    val b32 = Base32()
+    val decoded = b32.decode(keyGiven)
+    val key = decoded.joinToString("") { "%02x".format(it) }
 
+    val crypto = ALGO[cryptoGiven]!!
 
     val paddedTime = ((time/1000L)/period.toInt())
         .toString(16)

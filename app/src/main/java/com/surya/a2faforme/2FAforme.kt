@@ -5,6 +5,7 @@ package com.surya.a2faforme
 import android.app.Application
 import android.util.Log
 import java.io.File
+import org.apache.commons.codec.binary.Base32
 
 
 class A2FAforme : Application() {
@@ -20,6 +21,17 @@ class A2FAforme : Application() {
                 Log.d("TOTP_KEY_DATA", file.name + " -> " + line)
             }
         }
+
+
+//        val b32 = Base32()
+//        val decoded = b32.decode("HVR4CFHAFOWFGGFAGSA5JVTIMMPG6GMT")
+//        Log.d("TOTP_GENERATE", generateTOTP(
+//            decoded.joinToString("") { "%02x".format(it) },
+//            System.currentTimeMillis(),
+//            "30",
+//            "6",
+//            "HmacSHA1")
+//        )
 
 //        Log.d("TOTP_RET_KEYS", retrieveKeys(TOTP_DIR).toString())
 
