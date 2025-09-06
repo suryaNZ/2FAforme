@@ -14,13 +14,13 @@ class A2FAforme : Application() {
         keystoreInit()
 //        checks for TOTP DIR, and initialises it with a test file if it doesn't exist
         val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
-        storeNewKey("otpauth://totp/Google:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Google&digits=6&period=30", TOTP_DIR)
-        TOTP_DIR.listFiles().forEach { file ->
-            Log.d("TOTP_TEST_KEY", "file found: " + file.name)
-            file.forEachLine { line ->
-                Log.d("TOTP_KEY_DATA", file.name + " -> " + line)
-            }
-        }
+//        storeNewKey("otpauth://totp/alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Google&digits=6&period=30", TOTP_DIR)
+//        TOTP_DIR.listFiles().forEach { file ->
+//            Log.d("TOTP_TEST_KEY", "file found: " + file.name)
+//            file.forEachLine { line ->
+//                Log.d("TOTP_KEY_DATA", file.name + " -> " + line)
+//            }
+//        }
 
 
 //        val b32 = Base32()
