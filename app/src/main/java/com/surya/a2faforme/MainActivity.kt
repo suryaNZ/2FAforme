@@ -42,6 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import com.surya.a2faforme.ui.theme._2FAformeTheme
 import kotlinx.coroutines.delay
 import java.io.File
@@ -49,12 +52,20 @@ import kotlin.text.get
 
 
 //Onc
-
+val options = GmsBarcodeScannerOptions.Builder()
+    .setBarcodeFormats(
+        Barcode.FORMAT_QR_CODE,
+        )
+    .enableAutoZoom()
+    .build()
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val scanner = GmsBarcodeScanning.getClient(this, options)
+
         val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
 
         setContent {
@@ -94,7 +105,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TotpEntry(keydata: Map<String, String>) {
-    val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
