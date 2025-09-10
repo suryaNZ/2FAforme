@@ -13,7 +13,9 @@ class A2FAforme : Application() {
         super.onCreate()
         keystoreInit()
 //        checks for TOTP DIR, and initialises it with a test file if it doesn't exist
-        val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
+//        val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
+        val TOTP_DIR = File(filesDir, "TOTP_FILES")
+        if(!TOTP_DIR.exists()) TOTP_DIR.mkdirs()
 //        storeNewKey("otpauth://totp/alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Google&digits=6&period=30", TOTP_DIR)
 //        TOTP_DIR.listFiles().forEach { file ->
 //            Log.d("TOTP_TEST_KEY", "file found: " + file.name)
