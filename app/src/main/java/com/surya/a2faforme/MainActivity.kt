@@ -15,7 +15,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,6 +48,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,6 +66,7 @@ import com.surya.a2faforme.ui.theme._2FAformeTheme
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import java.io.File
+import kotlin.coroutines.Continuation
 import kotlin.text.get
 
 // Navigation
@@ -76,12 +82,7 @@ object EditCode
 
 
 //Onc
-val options = GmsBarcodeScannerOptions.Builder()
-    .setBarcodeFormats(
-        Barcode.FORMAT_QR_CODE,
-        )
-    .enableAutoZoom()
-    .build()
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,8 +94,16 @@ class MainActivity : ComponentActivity() {
         val filesDir = filesDir
 
         setContent {
-            MainNavHost(filesDir)
+            _2FAformeTheme {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    MainNavHost(filesDir)
+                }
 //            MainScreen(filesDir)
+            }
         }
     }
 }
@@ -108,27 +117,25 @@ fun MainScreen(filesDir:File, navController: NavController) {
 
 
     val context = LocalContext.current
-    val scanner = GmsBarcodeScanning.getClient(context, options)
 
     val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
 
-    _2FAformeTheme {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.navigate(AddNewCode) },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-                    Icon(Icons.Filled.Add, "Floating action button.")
-                }
-            },
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = "2FA For Me")
-                    },
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(AddNewCode) },
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            ) {
+                Icon(Icons.Filled.Add, "Floating action button.")
+            }
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = "2FA For Me")
+                },
 //                    navigationIcon = {
 //                        IconButton(onClick = {
 //                            navController.navigate(MainScreen)
@@ -136,37 +143,39 @@ fun MainScreen(filesDir:File, navController: NavController) {
 //                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "backIcon")
 //                        }
 //                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(ScrollState(0))
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(ScrollState(0))
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
 
-                retrieveKeys(TOTP_DIR).forEach { keydata:Map<String, String> ->
+            retrieveKeys(TOTP_DIR).forEach { keydata:Map<String, String> ->
 //                            Log.d("FILE_FOUND", file.absolutePath)
-                    TotpEntry(keydata)
-                }
+                TotpEntry(keydata)
             }
         }
     }
 }
 
 
+
 @Composable
 fun TotpEntry(keydata: Map<String, String>) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(1.dp)
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+        modifier = Modifier
+            .padding(8.dp, 0.dp)
     ) {
 
         val scrollState = rememberScrollState()
@@ -188,9 +197,7 @@ fun TotpEntry(keydata: Map<String, String>) {
                 }
             }
         }
-
-        Text(
-            text = keydata["label"]!!,
+        Box(
             modifier = Modifier
                 .padding(1.dp)
                 .background(
@@ -199,12 +206,19 @@ fun TotpEntry(keydata: Map<String, String>) {
                 )
                 .fillMaxWidth()
                 .horizontalScroll(scrollState),
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = if(scrollState.maxValue == 0) TextAlign.Center else TextAlign.Start,
-            fontSize = 48.sp,
-            softWrap = false,
-            overflow = TextOverflow.Visible
-        )
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(8.dp),
+                text = keydata["label"]!!,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = if(scrollState.maxValue == 0) TextAlign.Center else TextAlign.Start,
+                fontSize = 48.sp,
+                softWrap = false,
+                overflow = TextOverflow.Visible
+            )
+        }
+
         val text = generateTOTP(
             keydata["secret"]!!,
             System.currentTimeMillis(),
@@ -243,7 +257,18 @@ fun TotpEntry(keydata: Map<String, String>) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNewCode(navController: NavController) {
+fun AddNewCode(filesDir:File, navController: NavController) {
+    val TOTP_DIR = File(filesDir.absolutePath + File.separator + "TOTP_FILES")
+    val context = LocalContext.current
+
+    val qrOptions = GmsBarcodeScannerOptions.Builder()
+        .setBarcodeFormats(
+            Barcode.FORMAT_QR_CODE,
+        )
+        .enableAutoZoom()
+        .build()
+    val scanner = GmsBarcodeScanning.getClient(context, qrOptions)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -262,21 +287,65 @@ fun AddNewCode(navController: NavController) {
                     titleContentColor = MaterialTheme.colorScheme.onSurface,
                 ),
             )
-        }, content = {
-            Column(
+        }, content = { paddingValues ->
+            Box(
                 modifier = Modifier
-                    .padding(it)
+                    .padding(paddingValues)
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                Text(
-                    text = "Content of the page",
-                    fontSize = 30.sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp, 8.dp)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = "Scan the QR code on the website where you are enabling 2FA.",
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    Button(
+                        modifier = Modifier
+                            .padding(0.dp, 16.dp),
+                        onClick = {
+                            scanner.startScan()
+                                .addOnSuccessListener { res ->
+//                                    Log.d("SCAN_RES", res.rawValue!!)
+                                    if (storeNewKey(res.rawValue!!, TOTP_DIR)) {
+                                        navController.navigate(MainScreen)
+                                    }
+                                }
+                        },
+                        colors = ButtonColors(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.onPrimary,
+                            Color.Unspecified, Color.Unspecified
+                        )
+                    ) {
+                        Row {
+                            Icon(
+                                painter = painterResource(
+                                    id = R.drawable.baseline_qr_code_scanner_24
+                                ),
+                                contentDescription = "QR code scanner",
+                                modifier = Modifier
+                                    .padding(0.dp,0.dp,4.dp,0.dp)
+                            )
+                            Text(
+                                text = "Open Scanner",
+                                fontSize = 20.sp,
+//                            color = MaterialTheme.colorScheme.onPrimary,
+                            )
+
+                        }
+
+                    }
+                }
             }
+
         }
     )
 }
@@ -296,7 +365,7 @@ fun MainNavHost(filesDir: File) {
 
     NavHost(navController = navController, startDestination = MainScreen) {
         composable<MainScreen> { MainScreen(filesDir, navController) }
-        composable<AddNewCode> { AddNewCode(navController) }
+        composable<AddNewCode> { AddNewCode(filesDir, navController) }
         composable<EditCode> { EditCode(navController) }
     }
 }
